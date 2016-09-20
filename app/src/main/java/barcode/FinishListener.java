@@ -21,6 +21,11 @@ package barcode;
 import android.app.Activity;
 import android.content.DialogInterface;
 
+import com.creater.zxingdemo.utils.Contants;
+import com.creater.zxingdemo.utils.SubEvent;
+
+import de.greenrobot.event.EventBus;
+
 /**
  * Simple listener used to exit the app in a few cases.
  *
@@ -46,7 +51,7 @@ public final class FinishListener
 
 	@Override
 	public void run() {
-		/*EventBus.getDefault().post(new SubEvent(Contants.MATRIX_PREVIEW_TIME_END));*/
+		EventBus.getDefault().post(new SubEvent(Contants.MATRIX_PREVIEW_TIME_END));
 	}
 
 }

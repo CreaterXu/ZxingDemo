@@ -23,12 +23,16 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import de.greenrobot.event.EventBus;
+import android.util.Log;
 
 
 import com.creater.zxingdemo.R;
+import com.creater.zxingdemo.utils.Contants;
+import com.creater.zxingdemo.utils.SubEvent;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * This class handles all the messaging which comprises the state machine for
@@ -49,7 +53,7 @@ public final class CaptureActivityHandler extends Handler {
 
 	public CaptureActivityHandler(Activity activity, Vector<BarcodeFormat> decodeFormats,
 			String characterSet) {
-		System.loadLibrary("opencv_java");
+		//System.loadLibrary("opencv_java");
 		this.activity = activity;
 		this.decodeThread = new DecodeThread(activity, this, decodeFormats, characterSet,
 				new ViewfinderResultPointCallback(null));
@@ -69,35 +73,26 @@ public final class CaptureActivityHandler extends Handler {
 			}
 			break;
 		case R.id.restart_preview:
+			Log.e("xv","decode restart");
 			requestPreviewAndDecode();
 			break;
 		case R.id.decode_succeeded:
 			state = State.SUCCESS;
-			/*SubEvent event=new SubEvent(Contants.MATRIX_CHECK_SUCCESS);
-			Result r=(Result)message.obj;
+			Log.e("xv","decode success");
+			SubEvent event=new SubEvent(Contants.MATRIX_CHECK_SUCCESS);
 			event.setmObject((Result)message.obj);
-			EventBus.getDefault().post(event);*/
+			EventBus.getDefault().post(event);
 			break;
 		case R.id.decode_failed:
 			state = State.PREVIEW;
-			/*SubEvent event2=new SubEvent(Contants.MATRIX_CHECK_RESTART);
-			EventBus.getDefault().post(event2);*/
+			SubEvent event2=new SubEvent(Contants.MATRIX_CHECK_RESTART);
+			EventBus.getDefault().post(event2);
 			// ����Ԥ��
 			CameraManager.get().requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
 			break;
 		case R.id.return_scan_result:
 			activity.setResult(Activity.RESULT_OK, (Intent) message.obj);
 			activity.finish();
-			break;
-		case R.id.launch_product_query:
-			String url = (String) message.obj;
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-			activity.startActivity(intent);
-			break;
-		case R.id.light_distory:
-			/*SubEvent event1=new SubEvent(Contants.MATRIX_CHECK_FAILED_LIGHT_DESTORY);
-			EventBus.getDefault().post(event1);*/
 			break;
 		}
 
@@ -114,7 +109,6 @@ public final class CaptureActivityHandler extends Handler {
 			// continue
 		}
 
-		// Be absolutely sure we don't send any queued up messages
 		removeMessages(R.id.decode_succeeded);
 		removeMessages(R.id.decode_failed);
 	}

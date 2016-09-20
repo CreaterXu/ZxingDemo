@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        mainSurface=(SurfaceView)this.findViewById(R.id.main_surface);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,9 +51,6 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
 
     private void init(){
         mPresenter=new MainPresenter(this,this);
-        if (mainSurface==null){
-            Log.e("xv","null");
-        }
         mSurfaceHolder=mainSurface.getHolder();
         mSurfaceHolder.addCallback(this);
     }
@@ -87,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mPresenter.openCam(holder);
+        mPresenter.startChecking();
     }
 
     @Override

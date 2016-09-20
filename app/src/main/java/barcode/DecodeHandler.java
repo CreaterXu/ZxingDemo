@@ -28,6 +28,7 @@ import android.graphics.YuvImage;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 
 import com.creater.zxingdemo.R;
@@ -58,6 +59,7 @@ final class DecodeHandler extends Handler {
 	public void handleMessage(Message message) {
 		switch (message.what) {
 		case R.id.decode:
+			Log.e("xv","in decode");
 			decode((byte[]) message.obj, message.arg1, message.arg2);
 			break;
 		case R.id.quit:

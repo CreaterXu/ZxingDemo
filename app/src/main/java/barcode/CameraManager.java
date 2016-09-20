@@ -156,6 +156,7 @@ public final class CameraManager {
 			if (camera == null) {
 				throw new IOException();
 			}
+			Log.e("xv","in open");
 			camera.setPreviewDisplay(holder);
 			if (!initialized) {
 				initialized = true;
