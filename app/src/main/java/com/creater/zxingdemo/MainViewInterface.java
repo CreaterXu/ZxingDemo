@@ -5,4 +5,8 @@ package com.creater.zxingdemo;
  */
 public interface MainViewInterface {
     void checking();
+
+    void checkSuccess(String decodeMsg);
+
+    void timeOut();
 }

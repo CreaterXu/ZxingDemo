@@ -81,27 +81,17 @@ final class DecodeHandler extends Handler {
 	 *            The height of the preview frame.
 	 */
 	private void decode(byte[] data, int width, int height) {
-		decodeTime++;
-		long start = System.currentTimeMillis();
 		YuvImage image1 = new YuvImage(data, ImageFormat.NV21, width, height,
 				null);
 		ByteArrayOutputStream stream1 = new ByteArrayOutputStream();
 		image1.compressToJpeg(new Rect(0, 0, width, height), 100, stream1);
 		byte[] myByte1 = stream1.toByteArray();
 		Bitmap bmp1 = BitmapFactory.decodeByteArray(myByte1, 0, stream1.size());
-		if (decodeTime > 1) {
-			/*if (OpecvUtils.JudgeLightLed(bmp1)) {
-				Message message = Message.obtain(handler, R.id.light_distory);
-				message.sendToTarget();
-				return;
-			}*/
-		}
 		try {
-			/*int[] testCardPoint = OpecvUtils.getTestCardPoint(bmp1);
-			CameraManager.firstLeft = testCardPoint[0];
-			CameraManager.width = testCardPoint[2];
-			CameraManager.firstTop = (int) (testCardPoint[1] * ((double) 800 / 720));
-			CameraManager.height = (int) (testCardPoint[3] * ((double) 800 / 720));*/
+			CameraManager.firstLeft = 0;
+			CameraManager.width = bmp1.getWidth();
+			CameraManager.firstTop = 0;
+			CameraManager.height = bmp1.getHeight();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -129,17 +119,18 @@ final class DecodeHandler extends Handler {
 			rawResult = multiFormatReader.decodeWithState(bitmap);
 		} catch (ReaderException re) {
 			// continue
+			Log.e("xv",""+re.toString());
 		} finally {
 			multiFormatReader.reset();
 		}
 
 		if (rawResult != null) {
-			long end = System.currentTimeMillis();
-
+			Log.e("xv","result is not null");
 			Message message = Message.obtain(handler,
 					R.id.decode_succeeded, rawResult);
 			message.sendToTarget();
 		} else {
+			Log.e("xv","result is null");
 			Message message = Message.obtain(handler,
 					R.id.decode_failed);
 			message.sendToTarget();

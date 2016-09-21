@@ -15,16 +15,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback2,MainViewInterface {
 
-    @BindView(R.id.main_surface)
+public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback2,MainViewInterface,View.OnClickListener {
+
+
     SurfaceView mainSurface;
-    @BindView(R.id.result_textview)
+
     TextView resultTextview;
-    @BindView(R.id.ok_button)
+
     Button okButton;
 
 
@@ -34,10 +33,11 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mainSurface=(SurfaceView)this.findViewById(R.id.main_surface);
+        okButton=(Button)this.findViewById(R.id.ok_button);
+        resultTextview=(TextView)this.findViewById(R.id.result_textview);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     }
 
     private void init(){
+        okButton.setOnClickListener(this);
         mPresenter=new MainPresenter(this,this);
         mSurfaceHolder=mainSurface.getHolder();
         mSurfaceHolder.addCallback(this);
@@ -84,21 +85,43 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         mPresenter.openCam(holder);
-        mPresenter.startChecking();
+        //mPresenter.startChecking();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.e("xv","surface changed");
+        mPresenter.closeCam();
+        mPresenter.openCam(holder);
 
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        Log.e("xv","surface destoryed");
     }
 
     @Override
     public void checking() {
+        resultTextview.setText("正在检测中");
+    }
 
+    @Override
+    public void checkSuccess(String decodeMsg) {
+        resultTextview.setText(decodeMsg);
+        mPresenter.closeCam();
+        mPresenter.openCam(mSurfaceHolder);
+    }
+
+    @Override
+    public void timeOut() {
+        resultTextview.setText("没有检测对象");
+        mPresenter.closeCam();
+        mPresenter.openCam(mSurfaceHolder);
+    }
+
+    @Override
+    public void onClick(View v) {
+        mPresenter.startChecking();
     }
 }

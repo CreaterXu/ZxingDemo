@@ -26,6 +26,7 @@ public class MainPresenter {
 	private Activity mActivity;
 	private MainViewInterface mView;
 	private MainModelInterface mModel;
+
 	InactivityTimer inactivityTimer;
 	CaptureActivityHandler captureActivityHandler;
 
@@ -36,11 +37,11 @@ public class MainPresenter {
 	}
 
 	public void startChecking() {
-		mView.checking();
+        Log.e("xv","in start checking");
 		EventBus.getDefault().register(this);
         inactivityTimer = new InactivityTimer(mActivity);
         captureActivityHandler = new CaptureActivityHandler(mActivity, null, null);
-	}
+    }
 
 
     public void stopCheck(){
@@ -60,16 +61,19 @@ public class MainPresenter {
                 Log.e("xv","success");
                 String decodeMsg = event.getmObject().toString();
                 stopCheck();
+                mView.checkSuccess(decodeMsg);
                 EventBus.getDefault().unregister(this);
                 break;
             case Contants.MATRIX_CHECK_FAILED_LIGHT_DESTORY:
                 break;
             case Contants.MATRIX_PREVIEW_TIME_END:
-                Log.e("xv","time out");
                 stopCheck();
+                mView.timeOut();
+                EventBus.getDefault().unregister(this);
                 break;
             case Contants.MATRIX_CHECK_RESTART:// 重启预览即正在扫描中
                 Log.e("xv","checking");
+                mView.checking();
                 break;
             default:
                 break;
@@ -83,6 +87,7 @@ public class MainPresenter {
 		try {
 			CameraManager.get().init(mActivity);
 			CameraManager.get().openDriver(holder);
+            //CameraManager.get().startPreview();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,7 +98,6 @@ public class MainPresenter {
 	 * �ر����
 	 */
 	public void closeCam() {
-
 		CameraManager.get().init(mActivity);
 		CameraManager.get().closeDriver();
 	}
